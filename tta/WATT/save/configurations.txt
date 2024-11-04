@@ -1,0 +1,17 @@
+data_dir: /home/haghifam/HDD1/mvtec-ad
+save_dir: ./save/
+seed: 42
+backbone: ViT-B/32
+dataset: mvtec
+workers: 0
+batch_size: 128
+lr: 0.0001
+trials: 3
+adapt: True
+corruptions_list: original
+method: watt
+watt_type: sequential
+watt_l: 2
+watt_m: 5
+watt_temps: templates.yaml
+watt_reference_for_evaluation: False
