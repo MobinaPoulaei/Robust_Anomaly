@@ -30,13 +30,29 @@ def save_configuration(args):
     print("---"*10)
 
 
-
-def load_templates_from_yaml(file_path='/content/Robust_Anomaly_Detection/tta/WATT/templates.yaml'):
-    print("file path: ", file_path)
+def load_templates_from_yaml(file_path='templates.yaml'):
     """Load text templates from a YAML file."""
-    with open(file_path, 'r') as file:
-        data = yaml.safe_load(file)
-    return data['templates'] 
+    file_name, file_extension = os.path.splitext(file_path)
+    if file_extension == ".yaml":
+        with open(file_path, 'r') as file:
+            data = yaml.safe_load(file)
+        return data['templates']
+    elif file_extension == '.py':
+        data = {}
+        with open(file_path, 'r') as f:
+            exec(f.read(), data)
+        phrases = {'normal': [], 'abnormal': []}
+        for template_prompt in data['template_level_prompts']:
+            # normal prompts
+            for normal_prompt in data['state_level_normal_prompts']:
+                phrase = template_prompt.format(normal_prompt)
+                phrases['normal'] += [phrase]
+
+        # abnormal prompts
+            for abnormal_prompt in data['state_level_abnormal_prompts']:
+                phrase = template_prompt.format(abnormal_prompt)
+                phrases['abnormal'] += [phrase]
+        return phrases
 
 
 def save_checkpoint(state, is_best, args):

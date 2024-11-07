@@ -7,13 +7,14 @@ from tqdm import tqdm
 from adapt import get_method
 from utils import datasets 
 from utils.misc import set_global_seeds, save_configuration
+from utils.misc import load_templates_from_yaml
 
 
 def argparser():
     parser = argparse.ArgumentParser("Weight Average Test Time Adaptation of CLIP")
 
     # Directories
-    parser.add_argument('--data_dir', type=str, default='/content/mvtec-ad', help='Root directory for datasets')
+    parser.add_argument('--data_dir', type=str, default='/home/haghifam/HDD1/mvtec-ad', help='Root directory for datasets')
     parser.add_argument('--save_dir', type=str, default='./save/', help='Path for saving base training weights and results')
 
     # General settings
@@ -27,7 +28,7 @@ def argparser():
     parser.add_argument('--workers', type=int, default=0, help='Number of workers for data loading')
 
     # Training settings
-    parser.add_argument('--batch-size', type=int, default=32, help='Batch size for training')
+    parser.add_argument('--batch-size', type=int, default=128, help='Batch size for training')
     parser.add_argument('--lr', type=float, default=0.0001, help='Learning rate')
     parser.add_argument('--trials', default=3, type=int, help='Number of trials to repeat the experiments')
 
@@ -90,8 +91,6 @@ def main():
             raise ValueError("for non mvec objects please run the original WATT code.")
         for t in range(args.trials):
             for object in classes:
-                print("object: ", object)
-                print("len: ", len(data_loader[object]))
                 correct = 0
                 for batch_idx, (inputs, labels) in tqdm(enumerate(data_loader[object]), total=len(data_loader[object])):
                     inputs, labels = inputs.to(device, non_blocking=True), labels.to(device, non_blocking=True)
@@ -101,11 +100,9 @@ def main():
 
                     # perform adaptation
                     if args.adapt:
-                        print("performing adaptation...")
                         adapt_method.adapt(inputs, classes)
 
                     # perform evaluation
-                    print("adaptation complete, performing evaluation...")
                     pred = adapt_method.evaluate(inputs, classes)
 
                     # Calculate the number of correct predictions

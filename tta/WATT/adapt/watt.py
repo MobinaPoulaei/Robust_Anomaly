@@ -21,7 +21,7 @@ class WATT:
     """
 
 
-    def __init__(self, model, lr, type='sequential', l=2, m=5, temps_dir='/content/Robust_Anomaly_Detection/tta/WATT/templates.yaml', ref_eval=False, device='cpu'):
+    def __init__(self, model, lr, type='sequential', l=2, m=5, temps_dir='templates.yaml', ref_eval=False, device='cpu'):
         """
         Initializes the WATT module.
 
@@ -72,7 +72,7 @@ class WATT:
             classes: List of class names.
 
         """
-        print("in the adapt funtion")
+
         self.reset()
         self.perform_adaptation(x, classes)
 
@@ -127,7 +127,7 @@ class WATT:
             x: Input image tensor.
             classes: List of class names.
         """
-        print(f"inside perform adaptation: {self.type}")
+
         text_x = self.extract_text_embeddings(classes, self.all_templates, average=False)
 
         for m in range(self.m):
@@ -137,8 +137,7 @@ class WATT:
                     self.load_model_and_optimizer(self.model, self.optimizer, self.model_state, self.optimizer_state)
                 else:
                     self.model.load_state_dict(avg_state_dict, strict=False)
-                print("model loaded...")
-                print("len test_x: ", len(text_x))
+                
             for text_feat in text_x:
                 if self.type == 'parallel':
                     if m == 0:
@@ -153,7 +152,7 @@ class WATT:
                     similarity = (100 * image_features @ text_feat.t()).softmax(1)
                     values, pred = similarity.topk(1, 1, True, True)
                     pred_inputs = torch.cat([text_feat[c,] for c in pred])
-                    print("calculating loss...")
+
                     # Calculating the Loss
                     logits, image_features, text_features = self.model(x, pred_inputs, True)
                     images_similarity = image_features @ image_features.t()
