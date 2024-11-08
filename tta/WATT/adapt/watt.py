@@ -99,7 +99,7 @@ class WATT:
         if self.ref_eval:
             text_features = self.extract_text_embeddings(classes, [REFERENCE_TEMPLATE], average=True)
         else:
-            text_features = self.extract_text_embeddings(classes, self.all_templates, average=True)
+            text_features = self.extract_text_embeddings(classes, self.all_templates[classes], average=True)
         text_features = text_features.T
 
         similarity = (100.0 * image_features @ text_features.T).softmax(dim=-1)
@@ -190,7 +190,7 @@ class WATT:
         with torch.no_grad():
             text_features = []
             for class_name in class_names:
-                texts = [template.format(class_name) for template in templates] 
+                texts = [template.format(class_name) for template in templates[class_name]] 
                 texts = clip.tokenize(texts).to(self.device) 
                 class_embeddings = self.model.encode_text(texts) 
                 class_embeddings /= class_embeddings.norm(dim=-1, keepdim=True)
