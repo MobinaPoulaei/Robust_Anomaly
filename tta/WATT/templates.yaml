@@ -13,8 +13,8 @@ state_level_abnormal_prompts:
   - '{} with defect'
   - '{} with damage'
   - '{} with corruption'
-  - '{} with corruption'
-  - '{} with wrong'
+  - 'distorted {}'
+  - '{} with disruption'
 
 state_level_normality_specific_prompts: []
 
