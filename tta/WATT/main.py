@@ -110,8 +110,8 @@ def main():
                     correct += correctness.sum().item()
                     print(correct)
 
-                acc.append(correct / len(data_loader[[object]].dataset))
-                print(correct / len(data_loader[[object]].dataset))
+                acc.append(correct / len(data_loader[object].dataset))
+                print(correct / len(data_loader[object].dataset))
 
         print(str(round(np.array(acc).mean()*100, 2)) + ',' + str(round(np.array(acc).std()*100, 2)))
         with open(results_path, 'w') as fichier:
