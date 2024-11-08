@@ -89,8 +89,8 @@ def main():
         acc = []
         if args.dataset != 'mvtec':
             raise ValueError("for non mvec objects please run the original WATT code.")
-        for t in range(args.trials):
-            for object in classes:
+        for object in classes:
+            for t in range(args.trials):
                 correct = 0
                 for batch_idx, (inputs, labels) in tqdm(enumerate(data_loader[object]), total=len(data_loader[object])):
                     inputs, labels = inputs.to(device, non_blocking=True), labels.to(device, non_blocking=True)
