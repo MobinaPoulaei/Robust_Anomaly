@@ -100,10 +100,10 @@ def main():
 
                     # perform adaptation
                     if args.adapt:
-                        adapt_method.adapt(inputs, classes)
+                        adapt_method.adapt(inputs, classes, labels)
 
                     # perform evaluation
-                    pred = adapt_method.evaluate(inputs, classes)
+                    pred = adapt_method.evaluate(inputs, classes, labels)
 
                     # Calculate the number of correct predictions
                     correctness = pred.eq(labels.view(1, -1).expand_as(pred))
