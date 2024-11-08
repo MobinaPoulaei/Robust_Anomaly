@@ -63,7 +63,7 @@ class WATT:
         
 
 
-    def adapt(self, x, classes, labels):
+    def adapt(self, x, class, labels):
         """
         Forward pass with adaptation.
 
@@ -74,11 +74,11 @@ class WATT:
         """
 
         self.reset()
-        self.perform_adaptation(x, classes, labels)
+        self.perform_adaptation(x, class, labels)
 
 
     @torch.no_grad()
-    def evaluate(self, x, classes, labels):
+    def evaluate(self, x, class, labels):
         """
         Forward pass without adaptation.
 
@@ -97,9 +97,9 @@ class WATT:
         # Pick the top most similar labels for the image
         image_features /= image_features.norm(dim=-1, keepdim=True)
         if self.ref_eval:
-            text_features = self.extract_text_embeddings(classes, [REFERENCE_TEMPLATE], labels, average=True)
+            text_features = self.extract_text_embeddings(class, [REFERENCE_TEMPLATE], labels, average=True)
         else:
-            text_features = self.extract_text_embeddings(classes, self.all_templates, labels, average=True)
+            text_features = self.extract_text_embeddings(class, self.all_templates, labels, average=True)
         text_features = text_features.T
 
         similarity = (100.0 * image_features @ text_features.T).softmax(dim=-1)
@@ -119,7 +119,7 @@ class WATT:
                                       self.model_state, self.optimizer_state)
 
 
-    def perform_adaptation(self, x, classes, labels):
+    def perform_adaptation(self, x, class, labels):
         """
         Forward pass with adaptation for test-time. The model adapts itself during testing by updating on every forward pass.
 
@@ -128,7 +128,7 @@ class WATT:
             classes: List of class names.
         """
 
-        text_x = self.extract_text_embeddings(classes, self.all_templates, labels, average=False)
+        text_x = self.extract_text_embeddings(class, self.all_templates, labels, average=False)
 
         for m in range(self.m):
             all_weights = []
@@ -175,7 +175,7 @@ class WATT:
 
 
     
-    def extract_text_embeddings(self, class_names, templates, labels, average=True):  
+    def extract_text_embeddings(self, class_name, templates, labels, average=True):  
         """
         Extracts text embeddings for given class names and templates.
 
@@ -189,8 +189,8 @@ class WATT:
         """
         with torch.no_grad():
             text_features = []
-            for class_name in class_names:
-                texts = [template.format(class_name) for template in templates[labels]] 
+            for label in labels:
+                texts = [template.format(class_name) for template in templates[label]] 
                 texts = clip.tokenize(texts).to(self.device) 
                 class_embeddings = self.model.encode_text(texts) 
                 class_embeddings /= class_embeddings.norm(dim=-1, keepdim=True)

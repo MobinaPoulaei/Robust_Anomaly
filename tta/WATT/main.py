@@ -100,10 +100,10 @@ def main():
 
                     # perform adaptation
                     if args.adapt:
-                        adapt_method.adapt(inputs, classes, labels)
+                        adapt_method.adapt(inputs, object, ['normal' if label == 0 else 'abnormal' for label in labels])
 
                     # perform evaluation
-                    pred = adapt_method.evaluate(inputs, classes, labels)
+                    pred = adapt_method.evaluate(inputs, object, ['normal' if label == 0 else 'abnormal' for label in labels])
 
                     # Calculate the number of correct predictions
                     correctness = pred.eq(labels.view(1, -1).expand_as(pred))
