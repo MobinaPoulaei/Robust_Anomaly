@@ -22,6 +22,4 @@ state_level_abnormality_specific_prompts:
 template_level_prompts:
   - 'a photo of a {}'
   - 'a photo of the {} for visual inspection'
-  - 'a photo of a {} for visual inspection'
   - 'a photo of the {} for anomaly detection'
-  - 'a photo of a {} for anomaly detection'
