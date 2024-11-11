@@ -276,6 +276,6 @@ def prepare_mvtec_data(data_dir, corruption, batch_size, num_workers):
     for object in obj_list:
         test_dataset = MVTecDataset(root_dir=data_dir, class_name=object, mode='test', transform=CLIP_TRANSFORMS,
                                     mask_transform=MASK_TRASFORM)
-        test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False, num_workers=num_workers)
+        test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True, num_workers=num_workers)
         loaders[object] = test_loader
     return loaders, obj_list
