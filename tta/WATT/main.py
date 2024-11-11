@@ -28,9 +28,9 @@ def argparser():
     parser.add_argument('--workers', type=int, default=0, help='Number of workers for data loading')
 
     # Training settings
-    parser.add_argument('--batch-size', type=int, default=128, help='Batch size for training')
+    parser.add_argument('--batch-size', type=int, default=16, help='Batch size for training')
     parser.add_argument('--lr', type=float, default=0.0001, help='Learning rate')
-    parser.add_argument('--trials', default=3, type=int, help='Number of trials to repeat the experiments')
+    parser.add_argument('--trials', default=1, type=int, help='Number of trials to repeat the experiments')
 
     # Evaluation settings
     parser.add_argument('--adapt', default=True)#, action='store_true', help='Enable adaptation')
@@ -89,10 +89,11 @@ def main():
         acc = []
         if args.dataset != 'mvtec':
             raise ValueError("for non mvec objects please run the original WATT code.")
-        for object in classes:
+        for object_name in classes:
+            print("___OBJECT___: ", object_name)
             for t in range(args.trials):
                 correct = 0
-                for batch_idx, (inputs, labels) in tqdm(enumerate(data_loader[object]), total=len(data_loader[object])):
+                for batch_idx, (inputs, labels) in tqdm(enumerate(data_loader[object_name]), total=len(data_loader[object_name])):
                     inputs, labels = inputs.to(device, non_blocking=True), labels.to(device, non_blocking=True)
 
                     # reset the model before adapting to a new batch
@@ -100,18 +101,18 @@ def main():
 
                     # perform adaptation
                     if args.adapt:
-                        adapt_method.adapt(inputs, object, ['normal' if label == 0 else 'abnormal' for label in labels])
+                        adapt_method.adapt(inputs, object)
 
                     # perform evaluation
-                    pred = adapt_method.evaluate(inputs, object, ['normal' if label == 0 else 'abnormal' for label in labels])
+                    pred = adapt_method.evaluate(inputs, object_name)
 
                     # Calculate the number of correct predictions
                     correctness = pred.eq(labels.view(1, -1).expand_as(pred))
                     correct += correctness.sum().item()
                     print(correct)
 
-                acc.append(correct / len(data_loader[object].dataset))
-                print(correct / len(data_loader[object].dataset))
+                acc.append(correct / len(data_loader[object_name].dataset))
+                print(correct / len(data_loader[object_name].dataset))
 
         print(str(round(np.array(acc).mean()*100, 2)) + ',' + str(round(np.array(acc).std()*100, 2)))
         with open(results_path, 'w') as fichier:
