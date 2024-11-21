@@ -63,7 +63,7 @@ class WATT:
         
 
 
-    def adapt(self, x, class_name):
+    def adapt(self, x, class_name, saving_path=None):
         """
         Forward pass with adaptation.
 
@@ -74,7 +74,7 @@ class WATT:
         """
 
         self.reset()
-        self.perform_adaptation(x, class_name)
+        self.perform_adaptation(x, class_name, saving_path)
 
 
     @torch.no_grad()
@@ -119,7 +119,7 @@ class WATT:
                                       self.model_state, self.optimizer_state)
 
 
-    def perform_adaptation(self, x, class_name):
+    def perform_adaptation(self, x, class_name, saving_path=None):
         """
         Forward pass with adaptation for test-time. The model adapts itself during testing by updating on every forward pass.
 
@@ -172,9 +172,9 @@ class WATT:
                 all_weights.append(weights)
             avg_state_dict = self.weight_average(all_weights)
         self.model.load_state_dict(avg_state_dict, strict=False)
-        print("type(avg_state_dict): ", type(avg_state_dict))
-        torch.save(self.model.state_dict(), 'adapted_clip_state.pth')
-        print("model saved!")
+        if saving_path:
+            torch.save(self.model.state_dict(), saving_path+'/adapted_clip_state.pth')
+            print("model saved!")
 
     
     def extract_text_embeddings(self, class_name, templates, labels = ['normal', 'abnormal'], average=True):

@@ -16,6 +16,7 @@ def argparser():
     # Directories
     parser.add_argument('--data_dir', type=str, default='/home/haghifam/HDD1/mvtec-ad', help='Root directory for datasets')
     parser.add_argument('--save_dir', type=str, default='./save/', help='Path for saving base training weights and results')
+    parser.add_argument('--model_saving_path', type=str, default='./save/', help='Path for saving the adapted model')
 
     # General settings
     parser.add_argument('--seed', type=int, default=42, help='Random seed for reproducibility')
@@ -99,7 +100,7 @@ def main():
 
                     # perform adaptation
                     if args.adapt:
-                        adapt_method.adapt(inputs, object_name)
+                        adapt_method.adapt(inputs, object_name, args.model_saving_path)
 
                     # perform evaluation
                     pred = adapt_method.evaluate(inputs, object_name)
