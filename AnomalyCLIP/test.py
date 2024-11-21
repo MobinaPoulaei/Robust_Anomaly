@@ -95,7 +95,7 @@ def get_run_params(args):
     AnomalyCLIP_parameters = {"Prompt_length": args.n_ctx, "learnabel_text_embedding_depth": args.depth,
                               "learnabel_text_embedding_length": args.t_n_ctx}
 
-    model, _ = AnomalyCLIP_lib.load("ViT-L/14@336px", device=device, design_details=AnomalyCLIP_parameters)
+    model, _ = AnomalyCLIP_lib.load("ViT-L/14@336px", device=device, design_details=AnomalyCLIP_parameters, adapted_model_path=args.adapted_weights_path)
     model.eval()
 
     preprocess, target_transform = get_transform(args)
@@ -378,6 +378,7 @@ if __name__ == '__main__':
     parser.add_argument("--metrics", type=str, default='image-pixel-level')
     parser.add_argument("--seed", type=int, default=111, help="random seed")
     parser.add_argument("--sigma", type=int, default=4, help="zero shot")
+    parser.add_argument("--adapted_weights_path", default=None)
     # augmenstiations:
     parser.add_argument("--enable_transformation", default=False)
     parser.add_argument("--brightness", type=float, default=0)

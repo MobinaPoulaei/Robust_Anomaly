@@ -114,7 +114,7 @@ def load_checkpoint(model, checkpoint_path, strict=True):
     incompatible_keys = model.load_state_dict(state_dict, strict=strict)
     return incompatible_keys
 
-def load(name: str, device: Union[str, torch.device] = "cuda" if torch.cuda.is_available() else "cpu", design_details = None, jit: bool = False, download_root: str = None):
+def load(name: str, device: Union[str, torch.device] = "cuda" if torch.cuda.is_available() else "cpu", design_details = None, jit: bool = False, download_root: str = None, adapted_model_path: str =None):
     """Load a CLIP model
 
     Parameters
@@ -161,7 +161,12 @@ def load(name: str, device: Union[str, torch.device] = "cuda" if torch.cuda.is_a
             state_dict = torch.load(opened_file, map_location="cpu")
 
     if not jit:
-        model = build_model(name, state_dict or model.state_dict(), design_details).to(device)
+        if adapted_model_path:
+            print("loading model from the adapted model path...")
+            state_dict = load_state_dict(adapted_model_path)
+            model = build_model(name, state_dict, design_details).to(device)
+        else:
+            model = build_model(name, state_dict or model.state_dict(), design_details).to(device)
         if str(device) == "cpu":
             model.float()
         return model, _transform(model.visual.input_resolution)
