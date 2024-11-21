@@ -172,7 +172,9 @@ class WATT:
                 all_weights.append(weights)
             avg_state_dict = self.weight_average(all_weights)
         self.model.load_state_dict(avg_state_dict, strict=False)
-
+        print("type(avg_state_dict): ", type(avg_state_dict))
+        torch.save(self.model.state_dict(), 'adapted_clip_state.pth')
+        print("model saved!")
 
     
     def extract_text_embeddings(self, class_name, templates, labels = ['normal', 'abnormal'], average=True):
