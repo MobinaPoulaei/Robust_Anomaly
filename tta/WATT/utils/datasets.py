@@ -80,6 +80,8 @@ o   pbect_name:for mvtec
         loader, classes = prepare_imagefolder_data(data_dir, dataset, batch_size=batch_size, num_workers=num_workers)
     elif dataset in ['mvtec']:
         loader, classes = prepare_mvtec_data(data_dir, corruption, batch_size=batch_size, num_workers=num_workers)
+    elif dataset in ['miad']:
+        loader, classes = prepare_miad_data(data_dir, corruption, batch_size=batch_size, num_workers=num_workers)
 
     else:
         raise Exception(f'Dataset {dataset} not found/implemented!')
@@ -279,3 +281,15 @@ def prepare_mvtec_data(data_dir, corruption, batch_size, num_workers):
         test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True, num_workers=num_workers)
         loaders[object] = test_loader
     return loaders, obj_list
+
+
+def prepare_miad_data(data_dir, corruption, batch_size, num_workers):
+    obj_list = ['wind_turbine']
+    loaders = {}
+    for object in obj_list:
+        test_dataset = MVTecDataset(root_dir=data_dir, class_name=object, mode='test', transform=CLIP_TRANSFORMS,
+                                    mask_transform=MASK_TRASFORM)
+        test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True, num_workers=num_workers)
+        loaders[object] = test_loader
+    return loaders, obj_list
+

@@ -24,7 +24,7 @@ def argparser():
     parser.add_argument('--backbone', type=str, default='ViT-B/32', help='Model backbone to use') 
 
     # Dataset settings
-    parser.add_argument('--dataset', type=str, default='mvtec', choices=('mvtec', 'cifar10', 'cifar100', 'tiny-imagenet', 'visda', 'PACS', 'office_home', 'VLCS'), help='Dataset to use')
+    parser.add_argument('--dataset', type=str, default='mvtec', choices=('miad', 'mvtec', 'cifar10', 'cifar100', 'tiny-imagenet', 'visda', 'PACS', 'office_home', 'VLCS'), help='Dataset to use')
     parser.add_argument('--workers', type=int, default=0, help='Number of workers for data loading')
 
     # Training settings
@@ -87,8 +87,6 @@ def main():
     for corruption in args.corruptions_list:
         data_loader, classes = datasets.prepare_data(args.dataset, args.data_dir, corruption=corruption, batch_size=args.batch_size, num_workers=args.workers)
         acc = []
-        if args.dataset != 'mvtec':
-            raise ValueError("for non mvec objects please run the original WATT code.")
         for object_name in classes:
             print("___OBJECT___: ", object_name)
             for t in range(args.trials):

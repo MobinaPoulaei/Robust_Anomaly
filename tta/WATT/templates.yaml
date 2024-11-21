@@ -1,8 +1,8 @@
 state_level_normal_prompts:
-  - '{} with squares in the background'
-  - 'flawless {}, squares in the background'
-  - 'perfect {}, squares in the background'
-  - 'unblemished {}, squares in the background'
+  - '{}'
+  - 'flawless {}'
+  - 'perfect {}'
+  - 'unblemished {}'
 
 
 state_level_abnormal_prompts:
