@@ -33,7 +33,7 @@ def argparser():
     parser.add_argument('--trials', default=1, type=int, help='Number of trials to repeat the experiments')
 
     # Evaluation settings
-    parser.add_argument('--adapt', default=False, action='store_true', help='Enable adaptation')
+    parser.add_argument('--adapt', default=False) #, action='store_true', help='Enable adaptation')
 
     # Corruptions settings
     parser.add_argument('--corruptions_list', default="original", type=str, help='List of corruptions to apply to the dataset (Cifar datasets)')
