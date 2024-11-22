@@ -42,6 +42,9 @@ def argparser():
     # Method name
     parser.add_argument('--method', type=str, default='watt', choices=('watt'), help='Method to use for adaptation')
 
+    # Image
+    parser.add_argument('--image_size', type=int, default=336) #for L: 336, for B: 224
+
     return parser
 
 def add_method_specific_args(parser, method):
@@ -86,7 +89,7 @@ def main():
     if not isinstance(args.corruptions_list, list):
         args.corruptions_list = [args.corruptions_list]
     for corruption in args.corruptions_list:
-        data_loader, classes = datasets.prepare_data(args.dataset, args.data_dir, corruption=corruption, batch_size=args.batch_size, num_workers=args.workers)
+        data_loader, classes = datasets.prepare_data(args.dataset, args.data_dir, corruption=corruption, batch_size=args.batch_size, num_workers=args.workers, image_size=args.image_size)
         acc = []
         for object_name in classes:
             print("___OBJECT___: ", object_name)

@@ -1,5 +1,6 @@
 data_dir: /content/miad
 save_dir: ./save
+model_saving_path: ./save/
 seed: 42
 backbone: ViT-B/32
 dataset: miad
@@ -7,9 +8,10 @@ workers: 0
 batch_size: 16
 lr: 0.0001
 trials: 1
-adapt: True
+adapt: False
 corruptions_list: original
 method: watt
+image_size: 224
 watt_type: sequential
 watt_l: 2
 watt_m: 5
