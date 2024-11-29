@@ -1,7 +1,8 @@
-data_dir: /content/miad
-save_dir: ./save
+data_dir: /home/haghifam/Datasets/MIAD
+save_dir: ./save/
+model_saving_path: ./save/
 seed: 42
-backbone: ViT-B/32
+backbone: ViT-L/14@336px
 dataset: miad
 workers: 0
 batch_size: 16
@@ -10,8 +11,9 @@ trials: 1
 adapt: True
 corruptions_list: original
 method: watt
+image_size: 336
 watt_type: sequential
 watt_l: 2
 watt_m: 5
-watt_temps: $/content/Robust_Anomaly/tta/WATT/templates.yaml
+watt_temps: templates.yaml
 watt_reference_for_evaluation: False

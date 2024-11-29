@@ -14,7 +14,7 @@ def argparser():
     parser = argparse.ArgumentParser("Weight Average Test Time Adaptation of CLIP")
 
     # Directories
-    parser.add_argument('--data_dir', type=str, default='/home/haghifam/HDD1/mvtec-ad', help='Root directory for datasets')
+    parser.add_argument('--data_dir', type=str, default='/home/haghifam/Datasets/MIAD', help='Root directory for datasets')
     parser.add_argument('--save_dir', type=str, default='./save/', help='Path for saving base training weights and results')
     parser.add_argument('--model_saving_path', type=str, default='./save/', help='Path for saving the adapted model')
 
@@ -22,10 +22,10 @@ def argparser():
     parser.add_argument('--seed', type=int, default=42, help='Random seed for reproducibility')
 
     # Model
-    parser.add_argument('--backbone', type=str, default='ViT-B/32', help='Model backbone to use') 
+    parser.add_argument('--backbone', type=str, default='ViT-L/14@336px', help='Model backbone to use')
 
     # Dataset settings
-    parser.add_argument('--dataset', type=str, default='mvtec', choices=('miad', 'mvtec', 'cifar10', 'cifar100', 'tiny-imagenet', 'visda', 'PACS', 'office_home', 'VLCS'), help='Dataset to use')
+    parser.add_argument('--dataset', type=str, default='miad', choices=('miad', 'mvtec', 'cifar10', 'cifar100', 'tiny-imagenet', 'visda', 'PACS', 'office_home', 'VLCS'), help='Dataset to use')
     parser.add_argument('--workers', type=int, default=0, help='Number of workers for data loading')
 
     # Training settings
@@ -41,6 +41,9 @@ def argparser():
 
     # Method name
     parser.add_argument('--method', type=str, default='watt', choices=('watt'), help='Method to use for adaptation')
+
+    # Image
+    parser.add_argument('--image_size', type=int, default=336) #for L: 336, for B: 224
 
     return parser
 
@@ -86,7 +89,7 @@ def main():
     if not isinstance(args.corruptions_list, list):
         args.corruptions_list = [args.corruptions_list]
     for corruption in args.corruptions_list:
-        data_loader, classes = datasets.prepare_data(args.dataset, args.data_dir, corruption=corruption, batch_size=args.batch_size, num_workers=args.workers)
+        data_loader, classes = datasets.prepare_data(args.dataset, args.data_dir, corruption=corruption, batch_size=args.batch_size, num_workers=args.workers, image_size=args.image_size)
         acc = []
         for object_name in classes:
             print("___OBJECT___: ", object_name)

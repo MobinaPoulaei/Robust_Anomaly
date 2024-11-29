@@ -22,29 +22,27 @@ except ImportError:
 def _convert_image_to_rgb(image):
     return image.convert("RGB")
 
+def get_transforms(image_size=224):
+    CLIP_TRANSFORMS = transforms.Compose([
+                                    transforms.Resize(image_size, interpolation=BICUBIC),
+                                    transforms.CenterCrop(image_size),
+                                    _convert_image_to_rgb,
+                                    transforms.ToTensor(),
+                                    transforms.Normalize((0.48145466, 0.4578275, 0.40821073), 
+                                                        (0.26862954, 0.26130258, 0.27577711)),
+                                    ])
 
-CLIP_TRANSFORMS = transforms.Compose([
-                                transforms.Resize(224, interpolation=BICUBIC),
-                                transforms.CenterCrop(224),
-                                _convert_image_to_rgb,
-                                transforms.ToTensor(),
-                                transforms.Normalize((0.48145466, 0.4578275, 0.40821073), 
-                                                     (0.26862954, 0.26130258, 0.27577711)),
-                                ])
-
-MASK_TRASFORM = transforms.Compose([
-    transforms.Resize((224, 224)),
-    transforms.ToTensor()
-            ])
+    MASK_TRASFORM = transforms.Compose([
+        transforms.Resize((image_size, image_size)),
+        transforms.ToTensor()
+                ])
+    return CLIP_TRANSFORMS, MASK_TRASFORM
 
 CIFAR_COMMON_CORRUPTIONS = ['gaussian_noise', 'shot_noise', 'impulse_noise', 'defocus_blur', 'glass_blur',
                             'motion_blur', 'zoom_blur', 'snow', 'frost', 'fog', 'brightness', 'contrast', 
                             'elastic_transform', 'pixelate', 'jpeg_compression']
 
-
-
-
-def prepare_data(dataset, data_dir, corruption, batch_size=128, num_workers=1):
+def prepare_data(dataset, data_dir, corruption, batch_size=128, num_workers=1, image_size=224):
 
     """
     Prepare the specified dataset.
@@ -79,9 +77,9 @@ o   pbect_name:for mvtec
     elif dataset in  ["visda", "PACS", "office_home", "VLCS"]:
         loader, classes = prepare_imagefolder_data(data_dir, dataset, batch_size=batch_size, num_workers=num_workers)
     elif dataset in ['mvtec']:
-        loader, classes = prepare_mvtec_data(data_dir, corruption, batch_size=batch_size, num_workers=num_workers)
+        loader, classes = prepare_mvtec_data(data_dir, corruption, batch_size=batch_size, num_workers=num_workers, image_size=image_size)
     elif dataset in ['miad']:
-        loader, classes = prepare_miad_data(data_dir, corruption, batch_size=batch_size, num_workers=num_workers)
+        loader, classes = prepare_miad_data(data_dir, corruption, batch_size=batch_size, num_workers=num_workers, image_size=image_size)
 
     else:
         raise Exception(f'Dataset {dataset} not found/implemented!')
@@ -92,7 +90,7 @@ o   pbect_name:for mvtec
 
 
 
-def prepare_cifar10_data(data_dir, corruption, batch_size=128, level=5, size=10000, num_workers=1): 
+def prepare_cifar10_data(data_dir, corruption, batch_size=128, level=5, size=10000, num_workers=1, image_size=224):
     """
     A function to prepare different versions of CIFAR-10 dataset.
 
@@ -120,6 +118,7 @@ def prepare_cifar10_data(data_dir, corruption, batch_size=128, level=5, size=100
         - dataset (torchvision.datasets): The prepared dataset.
 
     """
+    CLIP_TRANSFORMS, MASK_TRASFORM = get_transforms(image_size=image_size)
     print(corruption)
     if corruption == 'original':
         dataset = torchvision.datasets.CIFAR10(root=data_dir, train=False, download=False, transform=CLIP_TRANSFORMS)
@@ -147,7 +146,7 @@ def prepare_cifar10_data(data_dir, corruption, batch_size=128, level=5, size=100
 
 
 
-def prepare_cifar100_data(data_dir, corruption, batch_size=128, level=5, size=10000, num_workers=1): 
+def prepare_cifar100_data(data_dir, corruption, batch_size=128, level=5, size=10000, num_workers=1, image_size=224): 
     """
     A function to prepare different versions of CIFAR-100 dataset.
 
@@ -176,7 +175,7 @@ def prepare_cifar100_data(data_dir, corruption, batch_size=128, level=5, size=10
 
     """
 
-    
+    CLIP_TRANSFORMS, MASK_TRASFORM = get_transforms(image_size=image_size)
     if corruption == 'original':
         dataset = torchvision.datasets.CIFAR100(root=data_dir, train=False, download=False, transform=CLIP_TRANSFORMS)
         print(f"The original CIFAR-100 dataset is selected, number of images: {len(dataset)}!\ndatadir: {data_dir}")
@@ -199,7 +198,7 @@ def prepare_cifar100_data(data_dir, corruption, batch_size=128, level=5, size=10
 
 
 
-def prepare_tinyimagenet(data_dir, corruption, batch_size=128, level=5, num_workers=1):
+def prepare_tinyimagenet(data_dir, corruption, batch_size=128, level=5, num_workers=1, image_size=224):
     """
     Prepare different versions of the TinyImageNet dataset.
 
@@ -226,6 +225,7 @@ def prepare_tinyimagenet(data_dir, corruption, batch_size=128, level=5, num_work
 
     
     """
+    CLIP_TRANSFORMS, MASK_TRASFORM = get_transforms(image_size=image_size)
     if corruption == 'original':
         dataset = TinyImageNetDataset(data_dir + '/tiny-imagenet-200/', mode='val', transform=CLIP_TRANSFORMS)
         print(f"The original TinyImageNetDataset dataset is selected, number of images: {len(dataset)}!\ndatadir: {data_dir}")
@@ -239,7 +239,7 @@ def prepare_tinyimagenet(data_dir, corruption, batch_size=128, level=5, num_work
     return loader, classes
 
 
-def prepare_imagefolder_data(data_dir, name, batch_size=128, num_workers=1):
+def prepare_imagefolder_data(data_dir, name, batch_size=128, num_workers=1, image_size=224):
 
     """
     Prepare an image dataset from a directory using ImageFolder.
@@ -262,7 +262,7 @@ def prepare_imagefolder_data(data_dir, name, batch_size=128, num_workers=1):
         - loader (torch.utils.data.DataLoader): DataLoader for the prepared dataset.
         - dataset (torchvision.datasets.ImageFolder): The prepared dataset.
     """
-
+    CLIP_TRANSFORMS, MASK_TRASFORM = get_transforms(image_size=image_size)
     dataset = ImageFolder(root=data_dir, transform=CLIP_TRANSFORMS)
     loader = torch.utils.data.DataLoader(dataset, batch_size=batch_size, shuffle=True, num_workers=num_workers, pin_memory=True, drop_last=True)
     print(f"The original {name} dataset is selected, number of images: {len(dataset)}!\ndatadir: {data_dir}")
@@ -271,7 +271,8 @@ def prepare_imagefolder_data(data_dir, name, batch_size=128, num_workers=1):
     return loader, classes
 
 
-def prepare_mvtec_data(data_dir, corruption, batch_size, num_workers):
+def prepare_mvtec_data(data_dir, corruption, batch_size, num_workers, image_size=224):
+    CLIP_TRANSFORMS, MASK_TRASFORM = get_transforms(image_size=image_size)
     obj_list = ['carpet', 'bottle', 'hazelnut', 'leather', 'cable', 'capsule', 'grid', 'pill',
                 'transistor', 'metal_nut', 'screw', 'toothbrush', 'zipper', 'tile', 'wood']
     loaders = {}
@@ -283,7 +284,8 @@ def prepare_mvtec_data(data_dir, corruption, batch_size, num_workers):
     return loaders, obj_list
 
 
-def prepare_miad_data(data_dir, corruption, batch_size, num_workers):
+def prepare_miad_data(data_dir, corruption, batch_size, num_workers, image_size=224):
+    CLIP_TRANSFORMS, MASK_TRASFORM = get_transforms(image_size=image_size)
     obj_list = ['wind_turbine']
     loaders = {}
     for object in obj_list:

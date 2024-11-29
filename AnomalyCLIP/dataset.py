@@ -6,16 +6,17 @@ import numpy as np
 import torch
 import os
 
+
 def generate_class_info(dataset_name):
     class_name_map_class_id = {}
     if dataset_name == 'mvtec':
-        obj_list = ['carpet', 'bottle', 'hazelnut', 'leather', 'cable', 'capsule', 'grid', 'pill',
-                    'transistor', 'metal_nut', 'screw', 'toothbrush', 'zipper', 'tile', 'wood']
+        obj_list = ['juice_bottle', 'juice_bottle_squared', 'capsule', 'screw_bag', 'screw_bag_squared', 'pushpins', 'pushpins_squared', 'pill']  # Only using juice_bottle class
     elif dataset_name == 'visa':
-        obj_list = ['candle', 'capsules', 'cashew', 'chewinggum', 'fryum', 'macaroni1', 'macaroni2',
-                    'pcb1', 'pcb2', 'pcb3', 'pcb4', 'pipe_fryum']
-    elif dataset_name == 'mpdd':
-        obj_list = ['bracket_black', 'bracket_brown', 'bracket_white', 'connector', 'metal_plate', 'tubes']
+        obj_list = ['capsules', 'capsules_squared', 'macaroni2', 'macaroni2_squared', 'pcb3', 'pcb3_squared']
+    elif dataset_name == 'miad':
+        obj_list = ['photovoltaic_module', 'wind_turbine']
+    elif dataset_name == 'medical':
+        obj_list = ['Retina_RESC', 'LiverCT', 'BrainMRI', 'Retina_RESC_squared']
     elif dataset_name == 'btad':
         obj_list = ['01', '02', '03']
     elif dataset_name == 'DAGM_KaggleUpload':
@@ -72,8 +73,8 @@ class Dataset(data.Dataset):
                 img_mask = Image.fromarray(img_mask.astype(np.uint8) * 255, mode='L')
         # transforms
         img = self.transform(img) if self.transform is not None else img
-        img_mask = self.target_transform(   
+        img_mask = self.target_transform(
             img_mask) if self.target_transform is not None and img_mask is not None else img_mask
         img_mask = [] if img_mask is None else img_mask
         return {'img': img, 'img_mask': img_mask, 'cls_name': cls_name, 'anomaly': anomaly,
-                'img_path': os.path.join(self.root, img_path), "cls_id": self.class_name_map_class_id[cls_name]}    
+                'img_path': os.path.join(self.root, img_path), "cls_id": self.class_name_map_class_id[cls_name]}
