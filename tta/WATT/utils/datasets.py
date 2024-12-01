@@ -295,3 +295,15 @@ def prepare_miad_data(data_dir, corruption, batch_size, num_workers, image_size=
         loaders[object] = test_loader
     return loaders, obj_list
 
+def prepare_rayan_data(data_dir, corruption, batch_size, num_workers, image_size=224):
+    CLIP_TRANSFORMS, MASK_TRASFORM = get_transforms(image_size=image_size)
+    obj_list = ['capsule', 'capsules','juice_bottle','macaroni2', 'pcb3', 'photovoltaic_module']
+    loaders = {}
+    for object in obj_list:
+        test_dataset = MVTecDataset(root_dir=data_dir, class_name=object, mode='test', transform=CLIP_TRANSFORMS,
+                                    mask_transform=MASK_TRASFORM)
+        test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True, num_workers=num_workers)
+        loaders[object] = test_loader
+    return loaders, obj_list
+
+
