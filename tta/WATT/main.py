@@ -25,7 +25,7 @@ def argparser():
     parser.add_argument('--backbone', type=str, default='ViT-L/14@336px', help='Model backbone to use')
 
     # Dataset settings
-    parser.add_argument('--dataset', type=str, default='miad', choices=('miad', 'mvtec', 'cifar10', 'cifar100', 'tiny-imagenet', 'visda', 'PACS', 'office_home', 'VLCS'), help='Dataset to use')
+    parser.add_argument('--dataset', type=str, default='miad', choices=('miad', 'mvtec', 'cifar10', 'cifar100', 'tiny-imagenet', 'visda', 'PACS', 'office_home', 'VLCS', 'rayan'), help='Dataset to use')
     parser.add_argument('--workers', type=int, default=0, help='Number of workers for data loading')
 
     # Training settings
