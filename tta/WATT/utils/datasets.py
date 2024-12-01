@@ -80,7 +80,9 @@ o   pbect_name:for mvtec
         loader, classes = prepare_mvtec_data(data_dir, corruption, batch_size=batch_size, num_workers=num_workers, image_size=image_size)
     elif dataset in ['miad']:
         loader, classes = prepare_miad_data(data_dir, corruption, batch_size=batch_size, num_workers=num_workers, image_size=image_size)
-
+    elif dataset == 'rayan':
+        loader, classes = prepare_rayan_data(data_dir, corruption, batch_size=batch_size, num_workers=num_workers, image_size=image_size)
+    
     else:
         raise Exception(f'Dataset {dataset} not found/implemented!')
     
