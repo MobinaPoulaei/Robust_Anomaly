@@ -54,5 +54,5 @@ class MVTecSolver(object):
             f.write(json.dumps(info, indent=4) + "\n")
         print('normal_samples', normal_samples, 'anomaly_samples', anomaly_samples)
 if __name__ == '__main__':
-    runner = MVTecSolver(root=r'/home/haghifam/HDD1/mvtec-ad')
+    runner = MVTecSolver(root=r'/content/mvtec-ad')
     runner.run()
